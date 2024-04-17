@@ -1,5 +1,4 @@
-import "../assets/css/reset.css";
-import "../assets/css/style.css";
+
 
 let currentBooks = 0;
 let searchQuery;
