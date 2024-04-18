@@ -96,4 +96,7 @@ height: 2.5rem;
   .card{
     width: 90vw !important;
   }
+    .book-search input{
+  font-size: .7rem;
+    }
  }
