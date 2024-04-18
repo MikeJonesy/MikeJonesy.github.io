@@ -57,7 +57,7 @@ Read Description
 async function renderSearchResults(json) {
   let booksFoundContainerHTML = "";
   const booksFound = json.items;
-console.log(booksFound)
+
   booksFound.forEach(function (book) {
     currentBooks += 1;
     const bookDescription =
@@ -99,11 +99,9 @@ function getSearchResults(searchQuery, startIndex = 0) {
     .then((res) => res.json())
     .then((json) => {
       renderSearchResults(json);
-      console.log(json)
 
       //target for infinite scroll after HTML is rendered
       const target = document.getElementsByClassName('card')[document.getElementsByClassName('card').length -15] //feel like the page load is less noticeable when target is before the end of current rendered HTML
-      console.log(target)
       observer.observe(target)
     });
 }
