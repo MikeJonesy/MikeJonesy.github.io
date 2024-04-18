@@ -110,7 +110,7 @@ function getSearchResults(searchQuery, startIndex = 0) {
 //get search results on input submit event
 function handleSearch(event) {
 searchQuery = searchForm.elements.searchInput.value;
-if(!!searchQuery){
+if(!searchQuery){
     alert('please enter a value in the search field')
     return;
 }
