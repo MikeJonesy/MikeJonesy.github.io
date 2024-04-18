@@ -1,6 +1,5 @@
-
 let currentBooks = 0;
-let searchQuery;
+let searchQuery = ''
 const body = document.body;
 const booksFoundContainer = body.querySelector(".books-found");
 const searchForm = document.forms.searchForm;
@@ -58,7 +57,7 @@ Read Description
 async function renderSearchResults(json) {
   let booksFoundContainerHTML = "";
   const booksFound = json.items;
-
+console.log(booksFound)
   booksFound.forEach(function (book) {
     currentBooks += 1;
     const bookDescription =
@@ -100,6 +99,7 @@ function getSearchResults(searchQuery, startIndex = 0) {
     .then((res) => res.json())
     .then((json) => {
       renderSearchResults(json);
+      console.log(json)
 
       //target for infinite scroll after HTML is rendered
       const target = document.getElementsByClassName('card')[document.getElementsByClassName('card').length -15] //feel like the page load is less noticeable when target is before the end of current rendered HTML
@@ -110,12 +110,13 @@ function getSearchResults(searchQuery, startIndex = 0) {
 
 //get search results on input submit event
 function handleSearch(event) {
-searchQuery = searchForm.elements.searchInput.value;
-if(!searchQuery){
+    event.preventDefault();
+if(!searchForm.elements.searchInput.value){
+    searchForm.elements.searchInput.value = searchQuery
     alert('please enter a value in the search field')
     return;
 }
-  event.preventDefault();
+  searchQuery = searchForm.elements.searchInput.value;
   booksFoundContainer.innerHTML = ''
   currentBooks = 0
   getSearchResults(searchQuery);
