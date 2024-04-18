@@ -97,6 +97,7 @@ function getSearchResults(searchQuery, startIndex = 0) {
   fetch(
     `https://www.googleapis.com/books/v1/volumes?q=${searchString}&startIndex=${startIndex}&maxResults=30`
   )
+    .then((res) => res.json())
     .then((json) => {
       renderSearchResults(json);
 
