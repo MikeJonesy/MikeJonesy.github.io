@@ -1,7 +1,9 @@
 
-
 let currentBooks = 0;
 let searchQuery;
+const body = document.body;
+const booksFoundContainer = body.querySelector(".books-found");
+const searchForm = document.forms.searchForm;
 
 //for infinite scroll
 const options = {
@@ -9,29 +11,23 @@ const options = {
     rootMargin: '0px',
     threshold: .1
 };
-
 let observer = new IntersectionObserver(handleIntersect, options);
-
-const body = document.body;
-const booksFoundContainer = body.querySelector(".books-found");
-const searchForm = document.forms.searchForm;
-
 
 //Function Delcaration
 
-function handleIntersect (entries, observer){ //function for infinite scoll
+
+//function for infinite scoll
+// if entry target is in view and there are books rendered on the page, execute the function
+function handleIntersect (entries, observer){ 
     entries.forEach(entry => {
         if(entry.isIntersecting && currentBooks > 0){
-            
-                getSearchResults(searchQuery, /*startIndex,*/ currentBooks )
-            observer.unobserve(entry.target)//maybe this is where add logic for updating what will be observed next
-            
+                getSearchResults(searchQuery, currentBooks )
+            observer.unobserve(entry.target)
         }
     })
-    
-
 }
 
+//inject the book description as a modal into book cards
 function renderDescription(bookTitle, bookDescription) {
   const descriptionModal = `<button data-id=${currentBooks} type="button" class="description btn btn-primary" data-bs-toggle="modal" data-bs-target="#Modal-${currentBooks}">
 Read Description
@@ -58,10 +54,9 @@ Read Description
   return descriptionModal;
 }
 
+//render search results for HTML injection into page
 async function renderSearchResults(json) {
-  //booksFoundContainer.innerHTML = ""; need it?
   let booksFoundContainerHTML = "";
-
   const booksFound = json.items;
 
   booksFound.forEach(function (book) {
@@ -93,32 +88,35 @@ async function renderSearchResults(json) {
 
     booksFoundContainerHTML += bookCard;
   });
-  console.log(currentBooks);
   booksFoundContainer.insertAdjacentHTML('beforeend',booksFoundContainerHTML)
-  //booksFoundContainer.innerHTML += booksFoundContainerHTML;
 }
 
+//get books for search query input
 function getSearchResults(searchQuery, startIndex = 0) {
   const searchString = new URLSearchParams(searchQuery).toString();
   fetch(
     `https://www.googleapis.com/books/v1/volumes?q=${searchString}&startIndex=${startIndex}&maxResults=30`
   )
-    .then((res) => res.json())
     .then((json) => {
       renderSearchResults(json);
 
-      //target for infinite scroll
-      const target = document.getElementsByClassName('card')[document.getElementsByClassName('card').length -15]
+      //target for infinite scroll after HTML is rendered
+      const target = document.getElementsByClassName('card')[document.getElementsByClassName('card').length -15] //feel like the page load is less noticeable when target is before the end of current rendered HTML
       console.log(target)
       observer.observe(target)
     });
 }
 
+//get search results on input submit event
 function handleSearch(event) {
+searchQuery = searchForm.elements.searchInput.value;
+if(!!searchQuery){
+    alert('please enter a value in the search field')
+    return;
+}
   event.preventDefault();
   booksFoundContainer.innerHTML = ''
   currentBooks = 0
-  searchQuery = searchForm.elements.searchInput.value;
   getSearchResults(searchQuery);
 }
 
